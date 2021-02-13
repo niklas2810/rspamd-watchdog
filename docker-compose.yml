@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+
+  watchdog:
+    image: niklas2810/rspamd-watchdog
+    container_name: rspamd-watchdog
+    restart: on-failure
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    env_file:
+      - .env
