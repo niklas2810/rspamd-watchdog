@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,6 +90,7 @@ public class WatchdogService implements Runnable {
 
     @Override
     public void run() {
+        waitUntilModFiveSecond();
         logger.debug("Checking the logs for spam emails..");
 
         if (health != null) {
@@ -114,13 +116,11 @@ public class WatchdogService implements Runnable {
 
             lastUpdate = start;
 
-            if (results.size() == 0) {
+            if (results.size() == 0)
                 logger.debug("Found no rejected emails.");
-                return;
-            }
-
-            mailer.send(mailSubject.replace("%amount%", results.size() + ""),
-                    buildMail(results));
+            else
+                mailer.send(mailSubject.replace("%amount%", results.size() + ""),
+                        buildMail(results));
         } catch (Exception e) {
             logger.error("Unexpected error while fetching logs: {}", e.getMessage(), e);
             try {
@@ -137,6 +137,15 @@ public class WatchdogService implements Runnable {
             } catch (Exception e) {
                 logger.error("Could not contact healthchecks.io", e);
             }
+        }
+    }
+
+    private void waitUntilModFiveSecond() {
+        try {
+            while (LocalTime.now().getSecond() % 5 != 0)
+                Thread.sleep(500);
+        } catch (InterruptedException e) {
+            logger.info("(Watchdog has been interrupted while waiting)");
         }
     }
 
