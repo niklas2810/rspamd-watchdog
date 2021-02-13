@@ -36,7 +36,7 @@ public class Scheduler {
         }
 
         executor = Executors.newScheduledThreadPool(1);
-        int interval = EnvHelper.requireInt("POLLING_INTERVAL");
+        int interval = EnvHelper.requireInt("FETCH_INTERVAL");
         if (interval <= 0) {
             logger.error("The polling interval must be larger than 0!");
             return;
