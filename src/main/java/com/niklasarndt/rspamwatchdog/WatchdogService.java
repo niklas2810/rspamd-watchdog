@@ -99,6 +99,8 @@ public class WatchdogService implements Runnable {
             }
         }
 
+        boolean error = false;
+
         try {
             long start = System.currentTimeMillis();
 
@@ -119,24 +121,23 @@ public class WatchdogService implements Runnable {
 
             mailer.send(mailSubject.replace("%amount%", results.size() + ""),
                     buildMail(results));
-
-            if (health != null) {
-                try {
-                    health.success().get();
-                } catch (Exception e) {
-                    logger.error("Could not contact healthchecks.io", e);
-                }
-            }
         } catch (Exception e) {
             logger.error("Unexpected error while fetching logs: {}", e.getMessage(), e);
             try {
                 health.fail(e.getMessage()).get();
+                error = true;
             } catch (Exception ex) {
                 logger.error("Could not contact healthchecks.io", ex);
             }
         }
 
-
+        if (!error && health != null) {
+            try {
+                health.success().get();
+            } catch (Exception e) {
+                logger.error("Could not contact healthchecks.io", e);
+            }
+        }
     }
 
     private String buildMail(List<InstanceRspamdEntry> results) {
