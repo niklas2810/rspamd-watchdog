@@ -5,7 +5,7 @@
         <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/niklas2810/rspamd-watchdog/Build%20Main%20Branch%20&%20Docker%20Image?logo=github&style=for-the-badge">
     </a>
      <a href="https://hub.docker.com/r/niklas2810/rspamd-watchdog">
-        <img alt="Docker Hub" src="https://img.shields.io/codacy/grade/2d9dd890a9d74522a875841dbc040142?logo=codacy&style=for-the-badge"/>
+        <img alt="Docker Hub" src="https://img.shields.io/badge/Docker%20Hub-Link-blue?style=for-the-badge&logo=docker"/>
      </a>
     <br>
     <br>   
