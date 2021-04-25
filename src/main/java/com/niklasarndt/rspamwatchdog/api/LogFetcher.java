@@ -65,12 +65,12 @@ public class LogFetcher {
                 logger.error("Mailcow rejected the request: HTTP Code {} ({})",
                         response.code(), response.body() != null ?
                                 response.body().string() : "No message");
-                return null;
+                return new RspamdHistoryEntry[0];
             }
 
             if (response.body() == null) {
                 logger.error("Mailcow didn't send a response!");
-                return null;
+                return new RspamdHistoryEntry[0];
             }
 
             final String body = Objects.requireNonNull(response.body()).string();
@@ -79,12 +79,12 @@ public class LogFetcher {
                 return MAPPER.readValue(body, RspamdHistoryEntry[].class);
             } catch (JsonProcessingException e) {
                 logger.error("Could not parse response from Mailcow: {}", e.getMessage(), e);
-                return null;
+                return new RspamdHistoryEntry[0];
             }
 
         } catch (IOException e) {
             logger.error("Failed to receive Mailcow response {}", e.getMessage(), e);
-            return null;
+            return new RspamdHistoryEntry[0];
         }
     }
 
