@@ -11,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class LogFetcher {
 
@@ -21,7 +23,8 @@ public class LogFetcher {
     private final URL base;
     private final String url;
     private final String apiKey;
-    private final OkHttpClient client = new OkHttpClient.Builder().build();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS).build();
     private final Logger logger;
 
     public LogFetcher(String baseUrl, String apiKey) throws MalformedURLException {
@@ -82,6 +85,9 @@ public class LogFetcher {
                 return new RspamdHistoryEntry[0];
             }
 
+        } catch (SocketTimeoutException e) {
+            logger.warn("Instance {} did not respond in time; skipping", base.toString());
+            return new RspamdHistoryEntry[0];
         } catch (IOException e) {
             logger.error("Failed to receive Mailcow response {}", e.getMessage(), e);
             return new RspamdHistoryEntry[0];
